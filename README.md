@@ -30,3 +30,5 @@ Steps followed so far are below:
 - realised just needed to query db i didn't need to add Data
 - set basic php to query and show all db on mysql daemon
 **fin**
+***pleaase go to localhost:8080 once built to see resulting index page.***
+
