@@ -25,3 +25,8 @@ Steps followed so far are below:
 - **eureka** after run have working server with localhost:8080 , now for some more config
 - ran check `dpkg -l | grep "apache2\|mysql-server-5.5\|php5"` to make sure modules installed as reported **confirmed** so far, so good.
 - **PAUSE** for food and break
+- setup inline file
+- played with different configs trying to use alternate method
+- realised just needed to query db i didn't need to add Data
+- set basic php to query and show all db on mysql daemon
+**fin**
