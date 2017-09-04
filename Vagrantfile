@@ -34,7 +34,7 @@ script 'createPHPIndex' do
 code <<-EOH
   cat << 'EOF' > /var/www/index.php
   <picture>
-    <img srcset="https://www.vibrato.com.au/hubfs/Vibrato%20Logos/vibrato-logo-name-318x80.png" alt="My default image">
+    <img srcset="https://www.vibrato.com.au/hubfs/Vibrato%20Logos/vibrato-logo-name-318x80.png" alt="Vibrato">
   </picture>
   <p>Output as requested for the Vibrato test, please see the below for current dbs on local service</p>
   <h3>Databases on current MySQL daemon:</h3>
