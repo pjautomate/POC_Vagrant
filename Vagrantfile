@@ -8,70 +8,63 @@ config.vm.provision "chef_apply" do |chef|
 chef.recipe = <<-RECIPE
 
 #
+#
+#
 # Cookbook Name:: confWeb
 # Recipe:: default
+# By: PJARVIS
+#
+# example of in file basic recipe to run and install apache2 mysql-server and lamp services
+# please go to localhost:8080 once completed, home page will be available from this point.
+#
 #
 
-script 'update' do
-interpreter "bash"
-code <<-EOH
-sudo apt-get -y update
-EOH
+apt_update
+
+# Install required packages
+
+apt_package %w(apache2 mysql-server libapache2-mod-auth-mysql php5-mysql php5 libapache2-mod-php5 php5-mcrypt) do
+  action :install
 end
 
-script 'installApache' do
-interpreter "bash"
+# Build the index file for querying mysql currend dbs
+
+script 'createPHPIndex' do
+  interpreter "bash"
 code <<-EOH
-sudo apt-get -y install apache2
-EOH
-end
+  cat << 'EOF' > /var/www/index.php
+  <picture>
+    <img srcset="https://www.vibrato.com.au/hubfs/Vibrato%20Logos/vibrato-logo-name-318x80.png" alt="My default image">
+  </picture>
+  <p>Output as requested for the Vibrato test, please see the below for current dbs on local service</p>
+  <h3>Databases on current MySQL daemon:</h3>
+  <p>
+  <?php
 
-script 'installMySQL' do
-interpreter "bash"
-code <<-EOH
-#pre-seed answers for db setup (root password)
-sudo debconf-set-selections <<< 'mysql-server-5.5 mysql-server/root_password password rootpass'
-sudo debconf-set-selections <<< 'mysql-server-5.5 mysql-server/root_password_again password rootpass'
+  $link = mysql_connect('localhost', 'root', 'rootpass');
+  $res = mysql_query("SHOW DATABASES");
 
-#install required packages
-sudo apt-get -y install mysql-server libapache2-mod-auth-mysql php5-mysql
-EOH
-end
-
-script 'installPHP' do
-interpreter "bash"
-code <<-EOH
-sudo apt-get -y install php5 libapache2-mod-php5 php5-mcrypt
-EOH
-end
-
-script 'createBase' do
-interpreter "bash"
-code <<-EOH
-rm /var/www/index.html
-
-cat << 'EOF' > /var/www/index.php
-<h1>Databases on current MySQL daemon:</h1>
-<?php
-
-$link = mysql_connect('localhost', 'root', 'rootpass');
-$res = mysql_query("SHOW DATABASES");
-
-while ($row = mysql_fetch_assoc($res)) {
-echo $row['Database'] . "\r\n";
-}
-?>
+  while ($row = mysql_fetch_assoc($res)) {
+  echo $row['Database'] . "<br />";
+  }
+  ?></p>
 EOF
 
 EOH
 end
 
+# Clean up and restart apache service
+
+file '/var/www/index.html' do
+  action :delete
+  only_if { File.exist? '/var/www/index.html' }
+end
+
+service 'apache2' do
+  action :restart
+end
+
 RECIPE
 end
 
-config.vm.provision "shell", inline: <<-SHELL
-
-echo "This is as far as I got guys, be gentle" > pete_note.txt
-
-SHELL
 end
